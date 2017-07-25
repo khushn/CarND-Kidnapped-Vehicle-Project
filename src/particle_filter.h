@@ -78,7 +78,8 @@ public:
 	 * @param predicted Vector of predicted landmark observations
 	 * @param observations Vector of landmark observations
 	 */
-	void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
+	//void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
+	Map::single_landmark_s *dataAssociation(Map & map_landmarks, LandmarkObs& lobs);
 	
 	/**
 	 * updateWeights Updates the weights for each particle based on the likelihood of the 
@@ -90,7 +91,7 @@ public:
 	 * @param map Map class containing map landmarks
 	 */
 	void updateWeights(double sensor_range, double std_landmark[], std::vector<LandmarkObs> observations,
-			Map map_landmarks);
+			Map & map_landmarks);
 	
 	/**
 	 * resample Resamples from the updated set of particles to form
@@ -114,6 +115,9 @@ public:
 	const bool initialized() const {
 		return is_initialized;
 	}
+
+private: 
+	double getMaxWeight();	
 };
 
 
