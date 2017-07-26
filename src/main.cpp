@@ -121,27 +121,35 @@ int main()
 		  vector<Particle> particles = pf.particles;
 		  int num_particles = particles.size();
 		  double highest_weight = -1.0;
-		  Particle best_particle;
+		  Particle *best_particle=NULL;
 		  double weight_sum = 0.0;
 		  for (int i = 0; i < num_particles; ++i) {
-			if (particles[i].weight > highest_weight) {
-				highest_weight = particles[i].weight;
-				best_particle = particles[i];
-			}
-			weight_sum += particles[i].weight;
+        Particle &p = particles.at(i);
+  			if (particles[i].weight > highest_weight) {
+  				highest_weight =p.weight;
+  				best_particle = &p;
+  			}
+			 weight_sum += p.weight;
 		  }
 		  cout << "highest w " << highest_weight << endl;
+      cout << "sum w " << weight_sum << endl;
 		  cout << "average w " << weight_sum/num_particles << endl;
 
           json msgJson;
-          msgJson["best_particle_x"] = best_particle.x;
-          msgJson["best_particle_y"] = best_particle.y;
-          msgJson["best_particle_theta"] = best_particle.theta;
+          msgJson["best_particle_x"] = best_particle->x;
+          msgJson["best_particle_y"] = best_particle->y;
+          msgJson["best_particle_theta"] = best_particle->theta;
 
           //Optional message data used for debugging particle's sensing and associations
-          msgJson["best_particle_associations"] = pf.getAssociations(best_particle);
-          msgJson["best_particle_sense_x"] = pf.getSenseX(best_particle);
-          msgJson["best_particle_sense_y"] = pf.getSenseY(best_particle);
+          string assoc_str =  pf.getAssociations(*best_particle);          
+          msgJson["best_particle_associations"] = assoc_str;
+          string sense_x_str = pf.getSenseX(*best_particle);
+          msgJson["best_particle_sense_x"] = sense_x_str;
+          string sense_y_str = pf.getSenseY(*best_particle);
+          msgJson["best_particle_sense_y"] = sense_y_str;
+          cout << "assoc_str: " << assoc_str << endl;
+          cout << "sense_x_str: " << sense_x_str << endl;
+          cout << "sense_y_str: " << sense_y_str << endl;
 
           auto msg = "42[\"best_particle\"," + msgJson.dump() + "]";
           // std::cout << msg << std::endl;

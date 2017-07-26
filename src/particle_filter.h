@@ -79,7 +79,8 @@ public:
 	 * @param observations Vector of landmark observations
 	 */
 	//void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
-	Map::single_landmark_s dataAssociation(Map & map_landmarks, LandmarkObs& lobs);
+	std::vector<LandmarkObs> dataAssociation(double sensor_range, 
+	Map & map_landmarks, std::vector<LandmarkObs>& observations);
 	
 	/**
 	 * updateWeights Updates the weights for each particle based on the likelihood of the 
@@ -90,7 +91,7 @@ public:
 	 * @param observations Vector of landmark observations
 	 * @param map Map class containing map landmarks
 	 */
-	void updateWeights(double sensor_range, double std_landmark[], std::vector<LandmarkObs> observations,
+	void updateWeights(double sensor_range, double std_landmark[], std::vector<LandmarkObs> &observations,
 			Map & map_landmarks);
 	
 	/**
@@ -103,11 +104,11 @@ public:
 	 * Set a particles list of associations, along with the associations calculated world x,y coordinates
 	 * This can be a very useful debugging tool to make sure transformations are correct and assocations correctly connected
 	 */
-	Particle SetAssociations(Particle particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y);
+	void SetAssociations(Particle &particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y);
 	
-	std::string getAssociations(Particle best);
-	std::string getSenseX(Particle best);
-	std::string getSenseY(Particle best);
+	std::string getAssociations(const Particle &best);
+	std::string getSenseX(const Particle &best);
+	std::string getSenseY(const Particle &best);
 
 	/**
 	 * initialized Returns whether particle filter is initialized yet or not.
