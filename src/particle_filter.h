@@ -36,7 +36,7 @@ class ParticleFilter {
 	bool is_initialized;
 	
 	// Vector of weights of all particles
-	std::vector<double> weights;
+	//std::vector<double> weights;
 	
 public:
 	
@@ -80,7 +80,8 @@ public:
 	 */
 	//void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
 	std::vector<LandmarkObs> dataAssociation(double sensor_range, 
-	Map & map_landmarks, std::vector<LandmarkObs>& observations);
+		double std_landmark[], Particle &particle,  Map & map_landmarks, std::vector<LandmarkObs>& observations);
+	
 	
 	/**
 	 * updateWeights Updates the weights for each particle based on the likelihood of the 
@@ -118,7 +119,10 @@ public:
 	}
 
 private: 
-	double getMaxWeight();	
+	double getMaxWeight();
+
+	double velocity_;
+	double yawrate_;
 };
 
 
