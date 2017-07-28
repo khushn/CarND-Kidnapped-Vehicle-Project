@@ -3,7 +3,9 @@
 1. Input data: 
    A big hurdle is the noise in the input data. One input yaw_rate value is 62.697. As soon as its recieved the yaw error goes out of range. 
    I suspect this could be simulator bug. I am using the Ubuntu version v1.45)
-   <a href= "error_occurs_on_eroneous_input.mp4"> Video</a> showing the error occurs as the erroneous input is recieved
+   <p>
+   <a href= "error_occurs_on_eroneous_input.mp4"> Video showing the error</a> occurs as the erroneous input is recieved
+   </p>
 
 
 2. The standard deviation values for GPS input and for subsequent process noise, is same. This is a bit confusing. Ideally it should be two separate values. 
