@@ -8,8 +8,8 @@
 
 3. As less calculations as possible withing loops. 
    This code is time critical. So should be designed to run in a very performant way. So as less calculations as possible. Some suggestions: 
-   a. Not too many particles (just enough to localize the car)
-   b. All one time calculations outside the loop.
+   - a. Not too many particles (just enough to localize the car)
+   - b. All one time calculations outside the loop.
 
 
 4. Clash in mpping to landmarks. 
