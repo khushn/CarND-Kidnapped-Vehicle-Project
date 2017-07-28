@@ -8,10 +8,12 @@
 
 3. As less calculations as possible withing loops. 
    This code is time critical. So should be designed to run in a very performant way. So as less calculations as possible. Some suggestions: 
-   - a. Not too many particles (just enough to localize the car)
-   - b. All one time calculations outside the loop.
+   - Not too many particles (just enough to localize the car)
+   - All one time calculations outside the loop.
 
 
 4. Clash in mpping to landmarks. 
 	Sometimes I saw, that few observations are mapped to same landmark. In that case, we remove the farther one, and retry. 
 	(One option is also to just let it be, and let the weight calculation take care of it.)
+
+5. In some iterations, weights are not updated, if their sum adds to zero. In that case, we keep a flag in resample also, and just return without resampling on the pre-existing weights. Apparently, that stabilizes it. 

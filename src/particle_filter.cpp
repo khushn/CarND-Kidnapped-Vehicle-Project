@@ -57,6 +57,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		p.y = dist_y(gen);
 		p.theta = dist_theta(gen);
 		p.weight = 1;
+		weights_.push_back(p.weight);
 		particles.push_back(p);
 	}
 
@@ -227,9 +228,12 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//cout << "inside updateWeights()." << endl;
 	double sigma_x = std_landmark[0];
 	double sigma_y = std_landmark[1];
-
-	vector<double> weights;
+	double DIVX = 2.0*sigma_x*sigma_x;
+	double DIVY = 2.0 *sigma_y*sigma_y;
+	double DIV2 = 2.0 *M_PI*sigma_x*sigma_y;
+	
 	double total_weights=0.0;
+	vector<double> tmp_weights;
 	
 	for(int i=0; i<num_particles; i++){
 		Particle & p = particles.at(i);
@@ -240,8 +244,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		vector<double> sense_x;
 		vector<double> sense_y;
 		std::vector<LandmarkObs> valid_obs;
-		//vector<LandmarkObs>::iterator it = observations.begin();
-		//while(it != observations.end()){
 		for(int j=0; j<observations.size(); j++){
 			//double r = DIST(0, 0, it->x, it->y);
 			LandmarkObs lobs = observations[j];
@@ -282,7 +284,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			Map::single_landmark_s assoc_lm = map_landmarks.landmark_map[lobs.id];
 			double dx = assoc_lm.x_f - lobs.x;
 			double dy = assoc_lm.y_f - lobs.y;
-			double prob = exp(-(dx*dx/(2*sigma_x*sigma_x) + dy*dy/(2*sigma_y*sigma_y))) / (2*M_PI*sigma_x*sigma_y);
+			double prob = exp(-(dx*dx/DIVX + dy*dy/DIVY)) / DIV2;
 			//out << "prob: " << prob << endl;
 			weight*=prob;
 			associations.push_back(lobs.id);
@@ -292,16 +294,9 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 		// account for the remaining associastions in weight
 		int rem_assoc = good_obs.size() - associations.size();
-		/**
+		
 
-		COMMENTED FOR TESTING
-
-		for(int k=0; k<rem_assoc; k++){
-			weight*= exp(-(200*200/(2*sigma_x*sigma_x) + 200*200/(2*sigma_y*sigma_y))) / (2*M_PI*sigma_x*sigma_y);
-		}
-		**/
-
-		weights.push_back(weight);
+		tmp_weights.push_back(weight);		
 		total_weights+= weight;
 
 		if (associations.size() > 0) {			
@@ -313,13 +308,19 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 	//cout << "updateWeights() --> total_weights: " << total_weights << endl;
 
-	if (total_weights > 0.) {
-		// Only then we replace the particle weight, 
-		// as it causes selection problem of particles, when we reuse the odl
+
+	if (total_weights > 0.0) {
+		// We use the newly calcualted weights only if they make sense
+		// else, we continue to use the old weights
+
+		weights_=tmp_weights;
+		weights_updated = true;
 		for(int i=0; i<num_particles; i++){
 			Particle & p = particles.at(i);
-			p.weight = weights[i]/total_weights;
+			p.weight = tmp_weights[i];
 		}
+	} else {
+		weights_updated = false;
 	}
 	
 	// Not needed as weights already are probabilities
@@ -338,6 +339,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	**/
 	
 	
+	
 
 	//cout << "updateWeights() done." << endl;
 }
@@ -347,8 +349,18 @@ void ParticleFilter::resample() {
 	// NOTE: You may find std::discrete_distribution helpful here.
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
 	//cout << "inside resample()." << endl;
+
+	if (!weights_updated) {
+		return;
+	}
+	
 	std::vector<Particle> new_particles;
-	double new_weight_sum=0.;
+
+	/**
+	
+	//Approach 1; 
+	//Home brewed based on Python code in AI for robotics course, Particle filter lesson
+
 	//get a random index into the particles
 	int index = rand() % num_particles + 1;
 	double beta = 0.0;
@@ -366,20 +378,20 @@ void ParticleFilter::resample() {
 			//cout << "beta: " << beta << ", weight at index: " << particles[index].weight << endl;
 		}
 		Particle sel_p = particles[index];
-		new_particles.push_back(sel_p);
-		new_weight_sum += sel_p.weight;
+		new_particles.push_back(sel_p);		
 	}
 	particles = new_particles;
-
-	/**
-	if (new_weight_sum > 0.0) {
-
-		for(int i=0; i<num_particles; i++){
-			Particle & p = particles.at(i);
-			p.weight/=new_weight_sum;
-		}
-	}
 	**/
+
+
+	// Approach 2: 
+	// As advised in this lesson
+	default_random_engine gen;
+	discrete_distribution<> dist(weights_.begin(), weights_.end());
+	for(int i=0; i<num_particles; i++) {
+		new_particles.push_back(particles[dist(gen)]);
+	}
+	particles = new_particles;
 
 	//cout << "resample() done." << endl;
 
