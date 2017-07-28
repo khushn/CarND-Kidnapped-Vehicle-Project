@@ -40,7 +40,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// NOTE: Consult particle_filter.h for more information about this method (and others in this file).
 	
 
-	num_particles=100;
+	num_particles=30;
 	velocity_=0.;
 	yawrate_=0.;
 
@@ -98,17 +98,18 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	normal_distribution<double> dist_y(0., std_pos[1]);
 	normal_distribution<double> dist_theta(0., std_pos[2]);
 	for(int i=0; i<num_particles; i++){
-		Particle & p = particles[i];
-		if (yawrate_!=0.) {
-			p.x += (velocity_/yawrate_)*(sin(p.theta+yawrate_*delta_t)-sin(p.theta)) + dist_x(gen);
+		Particle &p = particles[i];
+		if (fabs(yawrate_) > 0.001) {
+			p.x += (velocity_/yawrate_)*(sin(p.theta+yawrate_*delta_t) - sin(p.theta)) + dist_x(gen);
 			p.y += (velocity_/yawrate_)*(cos(p.theta) - cos(p.theta+yawrate_*delta_t)) + dist_y(gen);
 		} else {
-			p.x += velocity_*cos(p.theta) + dist_x(gen);
-			p.y += velocity_*sin(p.theta) + dist_y(gen);
+			p.x += velocity_*delta_t*cos(p.theta) + dist_x(gen);
+			p.y += velocity_*delta_t*sin(p.theta) + dist_y(gen);
 		}
 
 		p.theta += yawrate_*delta_t + dist_theta(gen);
 		p.theta = normalize_angle(p.theta);
+
 	}
 	//cout << "prediction done." << endl;
 }
@@ -353,7 +354,7 @@ void ParticleFilter::resample() {
 	if (!weights_updated) {
 		return;
 	}
-	
+
 	std::vector<Particle> new_particles;
 
 	/**

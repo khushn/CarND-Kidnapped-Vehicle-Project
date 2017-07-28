@@ -2,6 +2,7 @@
 
 1. Input data: 
    A big hurdle is the noise in the input data. One input yaw_rate value is 62.697. As soon as its recieved the yaw error goes out of range. 
+   I suspect this could be simulator bug. I am using the Ubuntu version v1.45)
 
 
 2. The standard deviation values for GPS input and for subsequent process noise, is same. This is a bit confusing. Ideally it should be two separate values. 

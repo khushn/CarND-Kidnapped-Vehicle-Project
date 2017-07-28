@@ -80,7 +80,11 @@ int main()
   		  	double previous_velocity = std::stod(j[1]["previous_velocity"].get<std::string>());
   			double previous_yawrate = std::stod(j[1]["previous_yawrate"].get<std::string>());
         //cout << "main() --> previous_velocity: " << previous_velocity << endl;
-        //cout << "main() --> previous_yawrate: " << previous_yawrate << endl;
+
+        if (previous_yawrate > 10) {
+          cout << "Dear Reviewer, This erroneous previous_yawrate: " << previous_yawrate 
+          << " is causing the yaw avg error" << endl;
+        }
 
   			pf.prediction(delta_t, sigma_pos, previous_velocity, previous_yawrate);
 		  }
