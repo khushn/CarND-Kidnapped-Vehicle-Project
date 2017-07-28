@@ -79,7 +79,8 @@ int main()
   			// Predict the vehicle's next state from previous (noiseless control) data.
   		  	double previous_velocity = std::stod(j[1]["previous_velocity"].get<std::string>());
   			double previous_yawrate = std::stod(j[1]["previous_yawrate"].get<std::string>());
-        cout << "main() --> previous_yawrate: " << previous_yawrate << endl;
+        //cout << "main() --> previous_velocity: " << previous_velocity << endl;
+        //cout << "main() --> previous_yawrate: " << previous_yawrate << endl;
 
   			pf.prediction(delta_t, sigma_pos, previous_velocity, previous_yawrate);
 		  }
@@ -132,10 +133,10 @@ int main()
   			}
 			 weight_sum += p.weight;
 		  }
-		  cout << "highest w " << highest_weight << endl;
-      cout << "sum w " << weight_sum << endl;
+		  //cout << "highest w " << highest_weight << endl;
+      //cout << "sum w " << weight_sum << endl;
 		  //cout << "average w " << weight_sum/num_particles << endl;
-      cout << "best_particle->theta: " << best_particle->theta << endl;
+      //cout << "best_particle->theta: " << best_particle->theta << endl;
 
           json msgJson;
           msgJson["best_particle_x"] = best_particle->x;
@@ -149,9 +150,9 @@ int main()
           msgJson["best_particle_sense_x"] = sense_x_str;
           string sense_y_str = pf.getSenseY(*best_particle);
           msgJson["best_particle_sense_y"] = sense_y_str;
-          cout << "assoc_str: " << assoc_str << endl;
-          cout << "sense_x_str: " << sense_x_str << endl;
-          cout << "sense_y_str: " << sense_y_str << endl;
+          //cout << "assoc_str: " << assoc_str << endl;
+          //cout << "sense_x_str: " << sense_x_str << endl;
+          //cout << "sense_y_str: " << sense_y_str << endl;
 
           auto msg = "42[\"best_particle\"," + msgJson.dump() + "]";
           // std::cout << msg << std::endl;

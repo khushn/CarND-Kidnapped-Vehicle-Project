@@ -80,7 +80,9 @@ public:
 	 */
 	//void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
 	std::vector<LandmarkObs> dataAssociation(double sensor_range, 
-		double std_landmark[], Particle &particle,  Map & map_landmarks, std::vector<LandmarkObs>& observations);
+		double std_landmark[], Particle &particle,  
+		Map & map_landmarks, std::vector<LandmarkObs>& observations, 
+		map<int, LandmarkObs> &alreadyMapped);
 	
 	
 	/**
