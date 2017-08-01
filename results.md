@@ -21,3 +21,11 @@
 	(One option is also to just let it be, and let the weight calculation take care of it.)
 
 5. In some iterations, weights are not updated, if their sum adds to zero. In that case, we keep a flag in resample also, and just return without resampling on the pre-existing weights. Apparently, that stabilizes it. 
+
+Added on 1-August-2017 (Before second submit):
+6. My project was not passed the first time. Even though I tried to explain my struggle and exploration in detail, with the simulator. Now with this superficial fix[1]. Without any code change in particle_filter.cpp. It works. I think simulator has a few issues. One which I have logged[2]. 
+
+The other major review comment was regarding the method dataAssociation(). Actually its not over-engineered. But I am just taking care of multiple observations not getting marked to the same landmark. 
+
+[1] https://discussions.udacity.com/t/beware-simulator-expects-yaw-in-0-to-2-pi-range-not-pi-to-pi/295952
+[2] https://github.com/udacity/self-driving-car-sim/issues/47
